@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = 'https://github.com/discover-devops/JenkinsDemo.git'  // Your repo URL
+        DOCKER_IMAGE = 'discoverdevops/my-custom-tomcat:latest'          // Docker image name
+        APP_FOLDER = 'my_tomcat_app'                                     // Folder containing the Dockerfile
+    }
+
+    stages {
+        stage('Checkout Source Code') {
+            steps {
+                echo 'Checking out source code...'
+                git branch: 'main', url: "${REPO_URL}"
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                script {
+                    // Specify the path to the Dockerfile in the APP_FOLDER
+                    docker.build("${DOCKER_IMAGE}", "./${APP_FOLDER}")
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                echo 'Pushing Docker image to DockerHub...'
+                script {
+                    docker.withRegistry('', 'dockerhub-credentials') {
+                        docker.image(DOCKER_IMAGE).push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Application') {
+            steps {
+                echo 'Deploying application...'
+                script {
+                    sh """
+                    docker stop my-custom-tomcat || true
+                    docker rm my-custom-tomcat || true
+                    docker run -d --name my-custom-tomcat -p 8080:8080 ${DOCKER_IMAGE}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline execution failed!'
+        }
+
+        always {
+            cleanWs()
+        }
+    }
+}
