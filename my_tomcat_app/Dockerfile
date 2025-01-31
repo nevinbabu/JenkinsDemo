@@ -7,10 +7,10 @@ RUN yum install java -y
 RUN mkdir /opt/tomcat/
 WORKDIR /opt/tomcat
 
-# Download and extract the latest version of Tomcat
-ADD https://downloads.apache.org/tomcat/tomcat-9/v9.0.76/bin/apache-tomcat-9.0.76.tar.gz /opt/tomcat
-RUN tar xvfz apache-tomcat-9.0.76.tar.gz && rm -f apache-tomcat-9.0.76.tar.gz
-RUN mv apache-tomcat-9.0.76/* /opt/tomcat/
+# Download and extract Tomcat version 9.0.98
+ADD https://downloads.apache.org/tomcat/tomcat-9/v9.0.98/bin/apache-tomcat-9.0.98.tar.gz /opt/tomcat
+RUN tar xvfz apache-tomcat-9.0.98.tar.gz && rm -f apache-tomcat-9.0.98.tar.gz
+RUN mv apache-tomcat-9.0.98/* /opt/tomcat/
 
 # Expose port 8080
 EXPOSE 8080
