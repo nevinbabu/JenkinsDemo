@@ -1,25 +1,26 @@
 pipeline {
-    agent any
+    // Specify the agent (worker node) where the job should run
+    agent { label 'WorkerNode' }
 
     environment {
-        REPO_URL = 'https://github.com/discover-devops/JenkinsDemo.git'  // Your repo URL
+        REPO_URL = 'https://github.com/discover-devops/JenkinsDemo.git'  // Your GitHub repository URL
         DOCKER_IMAGE = 'discoverdevops/my-custom-tomcat:latest'          // Docker image name
-        APP_FOLDER = 'my_tomcat_app'                                     // Folder containing the Dockerfile
+        APP_FOLDER = 'my_tomcat_app'                                     // Folder containing the Dockerfile and application files
     }
 
     stages {
         stage('Checkout Source Code') {
             steps {
-                echo 'Checking out source code...'
+                echo 'Checking out source code from repository...'
                 git branch: 'main', url: "${REPO_URL}"
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo 'Building Docker image...'
+                echo 'Building Docker image on WorkerNode...'
                 script {
-                    // Specify the path to the Dockerfile in the APP_FOLDER
+                    // Build the Docker image using the Dockerfile in the APP_FOLDER
                     docker.build("${DOCKER_IMAGE}", "./${APP_FOLDER}")
                 }
             }
@@ -38,7 +39,7 @@ pipeline {
 
         stage('Deploy Application') {
             steps {
-                echo 'Deploying application...'
+                echo 'Deploying application on WorkerNode...'
                 script {
                     sh """
                     docker stop my-custom-tomcat || true
@@ -52,7 +53,7 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline executed successfully!'
+            echo 'Pipeline executed successfully on WorkerNode!'
         }
 
         failure {
@@ -60,6 +61,7 @@ pipeline {
         }
 
         always {
+            echo 'Cleaning up workspace...'
             cleanWs()
         }
     }
