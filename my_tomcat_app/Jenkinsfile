@@ -44,7 +44,7 @@ pipeline {
                     sh """
                     docker stop my-custom-tomcat || true
                     docker rm my-custom-tomcat || true
-                    docker run -d --name my-custom-tomcat -p 8080:8080 ${DOCKER_IMAGE}
+                    docker run -d --name my-custom-tomcat -p 8000:8080 ${DOCKER_IMAGE}
                     """
                 }
             }
