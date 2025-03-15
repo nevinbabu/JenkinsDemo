@@ -1,11 +1,11 @@
 pipeline {
     agent {
-        label 'WorkerNode'  // Replace with your worker node's label
+        label 'slave1'  // Replace with your worker node's label
     }
     
     environment {
-        DOCKER_IMAGE = 'discoverdevops/my-app:latest'
-        GIT_REPO = 'https://github.com/discover-devops/JenkinsDemo.git'
+        DOCKER_IMAGE = 'nevinbabu/my-app'
+        GIT_REPO = 'https://github.com/nevinbabu/JenkinsDemo.git'
     }
 
     stages {
